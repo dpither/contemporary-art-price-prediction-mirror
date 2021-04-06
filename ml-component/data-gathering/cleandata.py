@@ -19,10 +19,11 @@ def moveBad():
     df.head()
 
     for index, row in df.iterrows():
-      name = row['Bad Picture']
-      src = f'./data/{name}.jpg'
-      dst = f'./BadData/{name}.jpg'
-      shutil.move(src, dst)
+      name = row['fullname']
+      src = f'./data/{name}'
+      if (os.path.exists(src)):
+          dst = f'./BadData/{name}'
+          shutil.move(src, dst)
 
 
 def moveDup():
@@ -32,9 +33,11 @@ def moveDup():
     for index, row in df.iterrows():
       name = row['name']
       src = f'./data/{name}.jpg'
-      dst = f'./Duplicates/{name}.jpg'
-      shutil.move(src, dst)
+      if (os.path.exists(src)):
+          dst = f'./Duplicates/{name}.jpg'
+          shutil.move(src, dst)
 
 
 if __name__=="__main__":
-        moveDup()
+        #moveDup()
+        moveBad()
