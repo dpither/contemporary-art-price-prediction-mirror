@@ -1,0 +1,3 @@
+
+I use google extension called Image Link Grabber to get all the urls of pictures from a specific auction from christies.com, and use the "result" pdf, which records the price of each picture,
+provided by christies.com to get all the prices. And I just copy paste all the information into google sheet. 
