@@ -9,7 +9,7 @@ from torchvision import models, transforms
 
 st.title('Contemporary Art Price Prediction')
 st.write("""
-# This app estimates how much is your drawing!
+ This app estimates how much is your drawing!
 """)
 
 test = st.file_uploader("Please upload an image", type=['png','jpeg','jpg'])
