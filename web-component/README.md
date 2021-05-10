@@ -5,6 +5,7 @@
 Get started:
 ```
 pip install streamlit
+pip install streamlit-drawable-canvas
 ```
 
 Other requirements:
