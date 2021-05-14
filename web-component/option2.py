@@ -12,6 +12,8 @@ from PIL import Image
 import torch, torchvision
 from torchvision import models, transforms
 from streamlit_drawable_canvas import st_canvas
+from io import BytesIO
+import base64
 
 def exe():
     st.title('Contemporary Art Price Prediction')
@@ -20,6 +22,7 @@ def exe():
     """)
     
     # From https://pypi.org/project/streamlit-drawable-canvas/
+    # From https://www.codegrepper.com/code-examples/python/streamlit+download+image
     # Specify canvas parameters in application
     stroke_width = st.sidebar.slider("Stroke width: ", 1, 25, 3)
     stroke_color = st.sidebar.color_picker("Stroke color hex: ")
@@ -63,6 +66,21 @@ def exe():
                 test = test.astype(np.uint8)
                 image = Image.fromarray(test, 'RGBA')
                 image = st.image(image, caption='Your Image.', use_column_width=True)
+                
+            result = Image.fromarray(test,mode="RGBA")
+
+            def get_image_download_link(img):
+                """Generates a link allowing the PIL image to be downloaded
+                in:  PIL image
+                out: href string
+                """
+                buffered = BytesIO()
+                img.save(buffered, format="PNG")
+                img_str = base64.b64encode(buffered.getvalue()).decode()
+                href = f'<a href="data:file/png;base64,{img_str}">Download result</a>'
+                return href
+                    
+            st.markdown(get_image_download_link(result), unsafe_allow_html=True)
         
             load_clf = pickle.load(open('filename.pkl', 'rb'))
             xform = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
