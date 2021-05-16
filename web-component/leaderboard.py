@@ -11,6 +11,7 @@ from datetime import datetime
 
 from sklearn.metrics import (accuracy_score, auc, f1_score, precision_score, recall_score,
                             mean_absolute_error, mean_squared_error, r2_score)
+# From https://github.com/vindruid/streamlit-leaderboard
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
 # funtions
@@ -57,8 +58,10 @@ def exe():
         else:
             # save submission
             # if image is colored (RGB)
-            image = Image.open(upload)
-            st.image(image, caption='Your Image.', use_column_width=True)
+            wimage = Image.open(upload)
+            st.image(wimage, caption='Your Image.', use_column_width=True)
+            image = Image.new("RGB", wimage.size)
+            image.paste(wimage)
             uploaded_file = np.asarray(image)
             if(np.ndim(uploaded_file)==3 and uploaded_file.shape[2] == 3):
                 
@@ -84,7 +87,7 @@ def exe():
             # image = st.image(image, caption='Your Image.', use_column_width=True)
             
             # calculate score
-            load_clf = torch.load('model_4_resnet18.pkl', map_location=torch.device('cpu'))
+            load_clf = torch.load('model/model_4_resnet18.pkl', map_location=torch.device('cpu'))
             xform = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
             input_tensor = xform(image)
             batch_t = input_tensor.unsqueeze(0)
