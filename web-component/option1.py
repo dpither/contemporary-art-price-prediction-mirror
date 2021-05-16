@@ -13,10 +13,10 @@ from torchvision import models, transforms
 
 def exe():
     st.title('Contemporary Art Price Prediction')
-    test = st.file_uploader("Please upload a Picture of Your Painting!", type=['png','jpeg','jpg'])
-    dimension = st.beta_columns(2)
-    width = dimension[0].number_input("Width (Inch)", value=0)
-    height = dimension[1].number_input("Height (Inch)", value=0)
+    test = st.file_uploader("Please upload a Picture of Your Painting!", type="jpg")
+    #dimension = st.beta_columns(2)
+    #width = dimension[0].number_input("Width (Inch)", value=0)
+    #height = dimension[1].number_input("Height (Inch)", value=0)
     if (st.button("Estimate this drawing")):
         if test is not None:
             try:
@@ -24,17 +24,17 @@ def exe():
                 st.image(image, caption='Your Image.', use_column_width=True)
             except:
                 test = test.astype(np.uint8)
-                image = Image.fromarray(test, 'RGBA')
+                image = Image.fromarray(test, 'RGB')
                 image = st.image(image, caption='Your Image.', use_column_width=True)
         
-            load_clf = pickle.load(open('filename.pkl', 'rb'))
+            load_clf = torch.load('model_4_resnet18.pkl', map_location=torch.device('cpu'))
             xform = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
             input_tensor = xform(image)
             batch_t = input_tensor.unsqueeze(0)
             load_clf.eval()
             out = load_clf(batch_t)
-            st.subheader('Result')
-            st.write(out)
+            score=np.exp(out.item())
+            st.subheader(f"YOUR Price: ${score}")
     
     
     

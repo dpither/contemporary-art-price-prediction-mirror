@@ -47,9 +47,9 @@ def exe():
         key="canvas",
     )
     test = canvas_result.image_data
-    dimension = st.beta_columns(2)
-    width = dimension[0].number_input("Width (Inch)", value=0)
-    height = dimension[1].number_input("Height (Inch)", value=0)
+    #dimension = st.beta_columns(2)
+    #width = dimension[0].number_input("Width (Inch)", value=0)
+    #height = dimension[1].number_input("Height (Inch)", value=0)
     
     # Do something interesting with the image data and paths
     #if canvas_result.image_data is not None:
@@ -59,13 +59,10 @@ def exe():
     
     if (st.button("Estimate this drawing")):
         if test is not None:
-            try:
-                image = Image.open(test)
-                st.image(image, caption='Your Image.', use_column_width=True)
-            except:
-                test = test.astype(np.uint8)
-                image = Image.fromarray(test, 'RGBA')
-                image = st.image(image, caption='Your Image.', use_column_width=True)
+            test = test.astype(np.uint8)
+            image = Image.fromarray(test, 'RGBA')
+            image = image.convert('RGB')
+            st.image(image, caption='Your Image.', use_column_width=True)
                 
             result = Image.fromarray(test,mode="RGBA")
 
@@ -82,11 +79,11 @@ def exe():
                     
             st.markdown(get_image_download_link(result), unsafe_allow_html=True)
         
-            load_clf = pickle.load(open('filename.pkl', 'rb'))
+            load_clf = torch.load('model_4_resnet18.pkl', map_location=torch.device('cpu'))
             xform = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
             input_tensor = xform(image)
             batch_t = input_tensor.unsqueeze(0)
             load_clf.eval()
             out = load_clf(batch_t)
-            st.subheader('Result')
-            st.write(out)
+            score=np.exp(out.item())
+            st.subheader(f"YOUR Price: ${score}")
