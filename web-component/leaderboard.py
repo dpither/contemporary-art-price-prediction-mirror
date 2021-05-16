@@ -45,11 +45,19 @@ def get_leaderboard_dataframe(csv_file = 'leaderboard.csv', greater_is_better = 
 def exe(): 
     # Title
     st.title("Competition Leaderboard")
+
+    # Showing Leaderboard 
+    # st.header("Leaderboard")
+    if os.stat("leaderboard.csv").st_size == 0:
+        st.text("NO SUBMISSION YET")
+    else:
+        df_leaderboard = get_leaderboard_dataframe(csv_file = 'leaderboard.csv', greater_is_better = True)
+        st.dataframe(df_leaderboard)
     
     # Username Input
     username = st.text_input("Username", value = "billy", max_chars= 20,)
     username = username.replace(",","") # for storing csv purpose
-    st.header(f"Hi {username} !!!")
+    st.subheader(f"Hi {username}! Upload your painting to enter the competition!")
     
     upload = st.file_uploader("Upload Submission JPG File",type='jpg')
     if st.button("SUBMIT"):
@@ -94,15 +102,9 @@ def exe():
             load_clf.eval()
             out=load_clf(batch_t)
             score = np.exp(out.item())
-            st.subheader(f"YOUR Price: ${score}")
+            score = round(score, 2)
+            st.subheader(f"Estimated Price: ${score}")
+            st.subheader("Refresh the page to see your submission on the leaderboard!")
             # save score
             with open("leaderboard.csv", "a+") as leaderboard_csv:
                 leaderboard_csv.write(f"{username},{score},{datetime_now}\n")
-    
-        # Showing Leaderboard 
-        st.header("Leaderboard")
-        if os.stat("leaderboard.csv").st_size == 0:
-            st.text("NO SUBMISSION YET")
-        else:
-            df_leaderboard = get_leaderboard_dataframe(csv_file = 'leaderboard.csv', greater_is_better = True)
-            st.write(df_leaderboard)
