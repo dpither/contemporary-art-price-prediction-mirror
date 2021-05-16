@@ -5,7 +5,7 @@ import leaderboard
 import streamlit as st
 
 PAGES = {
-    "Price Perdiction": option1,
+    "Price Prediction": option1,
     "Draw Right Now": option2,
     "Competition Leaderboard": leaderboard
 }
