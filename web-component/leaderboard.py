@@ -4,6 +4,8 @@ import numpy as np
 from PIL import Image
 import pickle
 import json
+import torch, torchvision
+from torchvision import models, transforms
 import os
 from datetime import datetime
 
@@ -82,13 +84,14 @@ def exe():
             # image = st.image(image, caption='Your Image.', use_column_width=True)
             
             # calculate score
-            load_clf = pickle.load(open('filename.pkl', 'rb'))
+            load_clf = torch.load('model_4_resnet18.pkl', map_location=torch.device('cpu'))
             xform = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
             input_tensor = xform(image)
             batch_t = input_tensor.unsqueeze(0)
             load_clf.eval()
-            score = load_clf(batch_t)
-            st.text(f"YOUR Price: {score}")
+            out=load_clf(batch_t)
+            score = np.exp(out.item())
+            st.subheader(f"YOUR Price: ${score}")
             # save score
             with open("leaderboard.csv", "a+") as leaderboard_csv:
                 leaderboard_csv.write(f"{username},{score},{datetime_now}\n")
@@ -98,5 +101,5 @@ def exe():
         if os.stat("leaderboard.csv").st_size == 0:
             st.text("NO SUBMISSION YET")
         else:
-            df_leaderboard = get_leaderboard_dataframe(csv_file = 'leaderboard.csv', greater_is_better = greater_is_better)
+            df_leaderboard = get_leaderboard_dataframe(csv_file = 'leaderboard.csv', greater_is_better = True)
             st.write(df_leaderboard)
