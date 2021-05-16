@@ -79,7 +79,7 @@ def exe():
                     
             st.markdown(get_image_download_link(result), unsafe_allow_html=True)
         
-            load_clf = torch.load('model_4_resnet18.pkl', map_location=torch.device('cpu'))
+            load_clf = torch.load('model/model_4_resnet18.pkl', map_location=torch.device('cpu'))
             xform = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
             input_tensor = xform(image)
             batch_t = input_tensor.unsqueeze(0)
