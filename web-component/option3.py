@@ -46,25 +46,28 @@ def exe():
     width = dimension[0].number_input("Width (Inch)", value=0.0, min_value=0.0, max_value=100.0, step=0.01,)
     height = dimension[1].number_input("Height (Inch)", value=0.0, min_value=0.0, max_value=100.0, step=0.01,)
     if (st.button("Estimate this drawing")):
-        if test is not None:
-            try:
-                image = Image.open(test)
-                st.image(image, caption='Your Image.', use_column_width=True)
-            except:
-                test = test.astype(np.uint8)
-                image = Image.fromarray(test, 'RGB')
-                image = st.image(image, caption='Your Image.', use_column_width=True)
-                
-            value=value-1
-            rgbimg = Image.new("RGB", image.size)
-            rgbimg.paste(image)
-            model=ArtistModel(5197)
-            load_clf = torch.load('model/expanded_model_resnet34.pkl', map_location=torch.device('cpu'))
-            xform = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
-            input_tensor = xform(rgbimg)
-            batch_t = input_tensor.unsqueeze(0)
-            model.load_state_dict(load_clf)
-            model.eval()
-            out = model(batch_t,torch.LongTensor([value]),torch.Tensor([[width]]),torch.Tensor([[height]]))
-            score=np.exp(out.item())
-            st.subheader(f"YOUR Price: ${score}")
+        if(value==0):
+            st.error('Please select an artist first')
+        else:
+            if test is not None:
+                try:
+                    image = Image.open(test)
+                    st.image(image, caption='Your Image.', use_column_width=True)
+                except:
+                    test = test.astype(np.uint8)
+                    image = Image.fromarray(test, 'RGB')
+                    image = st.image(image, caption='Your Image.', use_column_width=True)
+                    
+                value=value-1
+                rgbimg = Image.new("RGB", image.size)
+                rgbimg.paste(image)
+                model=ArtistModel(5197)
+                load_clf = torch.load('model/expanded_model_resnet34.pkl', map_location=torch.device('cpu'))
+                xform = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
+                input_tensor = xform(rgbimg)
+                batch_t = input_tensor.unsqueeze(0)
+                model.load_state_dict(load_clf)
+                model.eval()
+                out = model(batch_t,torch.LongTensor([value]),torch.Tensor([[width]]),torch.Tensor([[height]]))
+                score=np.exp(out.item())
+                st.subheader(f"YOUR Price: ${score}")
