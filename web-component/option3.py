@@ -65,6 +65,6 @@ def exe():
             batch_t = input_tensor.unsqueeze(0)
             model.load_state_dict(load_clf)
             model.eval()
-            out = model(batch_t,torch.IntTensor([value]),width,height)
+            out = model(batch_t,torch.LongTensor([value]),torch.Tensor([[width]]),torch.Tensor([[height]]))
             score=np.exp(out.item())
             st.subheader(f"YOUR Price: ${score}")
